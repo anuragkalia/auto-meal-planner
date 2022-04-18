@@ -90,25 +90,11 @@ function getBackfilledComboItemsList(
       .map((name) => {
         const { nutrients, multiple } = singleItemsMap[name];
 
-        const final: Nutrition = [0, 0, 0, 0];
-
-        for (let i = 0; i < final.length; i++) {
-          final[i] = nutrients[i] * multiple;
-        }
-        return final;
+        return scalarMultiplyNutrition(nutrients, multiple);
       })
-      .reduce(
-        (nutrients_sum, nutrients_current) => {
-          const final: Nutrition = [...nutrients_sum];
-
-          for (let i = 0; i < final.length; i++) {
-            final[i] = final[i] + nutrients_current[i];
-          }
-
-          return final;
-        },
-        [0, 0, 0, 0]
-      );
+      .reduce((nutrients_sum, nutrients_current) => {
+        return addNutrition(nutrients_sum, nutrients_current);
+      }, getZeroNutrition());
 
     return {
       priority,
@@ -121,6 +107,29 @@ function getBackfilledComboItemsList(
   });
 }
 
+function getZeroNutrition(): Nutrition {
+  return [0, 0, 0, 0];
+}
+
+function addNutrition(nutrients_sum: Nutrition, nutrients_current: Nutrition) {
+  const final: Nutrition = [...nutrients_sum];
+
+  for (let i = 0; i < final.length; i++) {
+    final[i] = final[i] + nutrients_current[i];
+  }
+
+  return final;
+}
+
+function scalarMultiplyNutrition(nutrients: Nutrition, multiple: number) {
+  const final: Nutrition = getZeroNutrition();
+
+  for (let i = 0; i < final.length; i++) {
+    final[i] = nutrients[i] * multiple;
+  }
+  return final;
+}
+
 function getMealForDay(meal: MealType, relativeDay = 0) {
   return getMealForDayInternal(
     meal,
@@ -131,4 +140,15 @@ function getMealForDay(meal: MealType, relativeDay = 0) {
   );
 }
 
-export { getMealForDay };
+function parseNutrients(nutrients: Nutrition) {
+  return [
+    `${nutrients[0].toFixed(2)} cal`,
+    `${nutrients[1].toFixed(2)}g`,
+    `${nutrients[2].toFixed(2)}g`,
+    `${nutrients[3].toFixed(2)}g`,
+  ];
+}
+
+export { getMealForDay, parseNutrients, scalarMultiplyNutrition };
+
+export type { MealType };

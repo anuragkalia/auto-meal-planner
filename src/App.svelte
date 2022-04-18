@@ -1,25 +1,19 @@
 <script lang="ts">
   import { getDate } from "./lib/day";
 
-  import { getMealForDay } from "./lib/meal";
+  import Meal from "./Meal.svelte";
 
   const relativeDay = 0;
 
   const date = getDate(relativeDay);
-  const breakfastItems = getMealForDay("breakfast", relativeDay);
-
-  export let name: string;
 </script>
 
 <main>
-  <h1>Hello {name}!</h1>
-  <p>
-    Date = {date}
-    breakfast =
-    {#each breakfastItems as item}
-      <p>{item.name}</p>
-    {/each}
-  </p>
+  <h1>Meal for the day!</h1>
+  <h2>Today is {date}</h2>
+  <h3>Breakfast</h3>
+
+  <Meal {relativeDay} mealTime="breakfast" />
 </main>
 
 <style>
